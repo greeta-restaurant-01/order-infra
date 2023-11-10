@@ -42,7 +42,7 @@ resource "kubernetes_deployment_v1" "order_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-          image = "ghcr.io/greeta-order-02/order-service:f6c57483605657ce74cec5fea9d96bf1f505b41c"
+          image = "ghcr.io/greeta-order-02/order-service:dbc1fcb94c540cbe94ec46c748e431690921b550"
           name  = "order"
           image_pull_policy = "Always"
           port {
