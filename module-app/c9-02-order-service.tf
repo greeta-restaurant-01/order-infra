@@ -12,7 +12,7 @@ resource "kubernetes_config_map_v1" "order" {
 }
 
 resource "kubernetes_deployment_v1" "order_deployment" {
-  depends_on = [kubernetes_deployment_v1.book_postgres_deployment]
+  depends_on = [kubernetes_deployment_v1.order_postgres_deployment]
   metadata {
     name = "order"
     labels = {
@@ -42,7 +42,7 @@ resource "kubernetes_deployment_v1" "order_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-          image = "ghcr.io/greeta-bookshop-01/order-service:7f03518833641f74c45a1fbbe91bcb7d58470a00"
+          image = "ghcr.io/greeta-restaurant-01/order-service:7f03518833641f74c45a1fbbe91bcb7d58470a00"
           name  = "order"
           image_pull_policy = "Always"
           port {

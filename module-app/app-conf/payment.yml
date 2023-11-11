@@ -10,7 +10,7 @@ server:
 
 spring:
   application:
-    name: order
+    name: payment
   lifecycle:
     timeout-per-shutdown-phase: 15s
 
@@ -18,7 +18,7 @@ spring:
     open-in-view: false
     show-sql: true
   datasource:
-    url: jdbc:postgresql://order-postgres:5432/postgres?currentSchema=order&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
+    url: jdbc:postgresql://order-postgres:5432/postgres?currentSchema=payment&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
     username: postgres
     password: admin
     hikari:
@@ -27,17 +27,7 @@ spring:
   sql:
     init:
       mode: ALWAYS
-      schema-locations: classpath:init-schema.sql
-
-  keycloak:
-    server-url: http://keycloak-server:8080
-    server-external-url: https://keycloak.greeta.net
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${spring.keycloak.server-external-url}/realms/order-realm
-          jwk-set-uri: ${spring.keycloak.server-url}/realms/order-realm/protocol/openid-connect/certs
+      schema-locations: classpath:init-schema.sql,classpath:init-data.sql
 
 logging:
   pattern:
@@ -49,13 +39,7 @@ logging:
     org.springframework.security: DEBUG
 
 info:
-  system: Order Service
-
-jwt:
-  auth:
-    converter:
-      resource-id: order-app
-      principal-attribute: preferred_username
+  system: Payment Service
 
 management:
   endpoints:
@@ -79,20 +63,9 @@ management:
     tags:
       application: ${spring.application.name}
 
-
-openapi:
-  oauthflow:
-    authServerUrl: ${spring.keycloak.server-external-url}
-    realm: order-realm
-
-
-
-order-service:
+payment-service:
   payment-request-topic-name: payment-request
   payment-response-topic-name: payment-response
-  restaurant-approval-request-topic-name: restaurant-approval-request
-  restaurant-approval-response-topic-name: restaurant-approval-response
-  customer-topic-name: customer
   outbox-scheduler-fixed-rate: 10000
   outbox-scheduler-initial-delay: 10000
 
@@ -119,8 +92,6 @@ kafka-consumer-config:
   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
   payment-consumer-group-id: payment-topic-consumer
-  restaurant-approval-consumer-group-id: restaurant-approval-topic-consumer
-  customer-group-id: customer-topic-consumer
   auto-offset-reset: earliest
   specific-avro-reader-key: specific.avro.reader
   specific-avro-reader: true

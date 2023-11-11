@@ -1,22 +1,22 @@
-resource "kubernetes_config_map_v1" "dispatcher" {
+resource "kubernetes_config_map_v1" "restaurant" {
   metadata {
-    name      = "dispatcher"
+    name      = "restaurant"
     labels = {
-      app = "dispatcher"
+      app = "restaurant"
     }
   }
 
   data = {
-    "application.yml" = file("${path.module}/app-conf/dispatcher.yml")
+    "application.yml" = file("${path.module}/app-conf/restaurant.yml")
   }
 }
 
-resource "kubernetes_deployment_v1" "dispatcher_deployment" {
-  depends_on = [kubernetes_deployment_v1.book_postgres_deployment]
+resource "kubernetes_deployment_v1" "restaurant_deployment" {
+  depends_on = [kubernetes_deployment_v1.order_postgres_deployment]
   metadata {
-    name = "dispatcher"
+    name = "restaurant"
     labels = {
-      app = "dispatcher"
+      app = "restaurant"
     }
   }
  
@@ -24,13 +24,13 @@ resource "kubernetes_deployment_v1" "dispatcher_deployment" {
     replicas = 1
     selector {
       match_labels = {
-        app = "dispatcher"
+        app = "restaurant"
       }
     }
     template {
       metadata {
         labels = {
-          app = "dispatcher"
+          app = "restaurant"
         }
         annotations = {
           "prometheus.io/scrape" = "true"
@@ -42,16 +42,12 @@ resource "kubernetes_deployment_v1" "dispatcher_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-          image = "ghcr.io/greeta-bookshop-01/dispatcher-service:7f03518833641f74c45a1fbbe91bcb7d58470a00"
-          name  = "dispatcher"
+          image = "ghcr.io/greeta-restaurant-01/restaurant-service:e217e38b0fafa2fc02c261454c64fc204d784ace"
+          name  = "restaurant"
           image_pull_policy = "Always"
           port {
             container_port = 8080
-          }  
-          port {
-            container_port = 8003
-          } 
-
+          }          
           env {
             name  = "SPRING_CLOUD_BOOTSTRAP_ENABLED"
             value = "true"
@@ -69,7 +65,7 @@ resource "kubernetes_deployment_v1" "dispatcher_deployment" {
 
           env {
             name  = "OTEL_SERVICE_NAME"
-            value = "dispatcher"
+            value = "restaurant"
           }
 
           env {
@@ -90,12 +86,7 @@ resource "kubernetes_deployment_v1" "dispatcher_deployment" {
           env {
             name  = "BPL_DEBUG_PORT"
             value = "8003"
-          }
-
-          env {
-            name  = "SPRING_RABBITMQ_HOST"
-            value = "book-rabbitmq"
-          }          
+          }           
 
           # resources {
           #   requests = {
@@ -140,9 +131,9 @@ resource "kubernetes_deployment_v1" "dispatcher_deployment" {
   }
 }
 
-resource "kubernetes_horizontal_pod_autoscaler_v1" "dispatcher_hpa" {
+resource "kubernetes_horizontal_pod_autoscaler_v1" "restaurant_hpa" {
   metadata {
-    name = "dispatcher-hpa"
+    name = "restaurant-hpa"
   }
   spec {
     max_replicas = 2
@@ -150,24 +141,24 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "dispatcher_hpa" {
     scale_target_ref {
       api_version = "apps/v1"
       kind = "Deployment"
-      name = kubernetes_deployment_v1.dispatcher_deployment.metadata[0].name 
+      name = kubernetes_deployment_v1.restaurant_deployment.metadata[0].name 
     }
     target_cpu_utilization_percentage = 70
   }
 }
 
-resource "kubernetes_service_v1" "dispatcher_service" {
-  depends_on = [kubernetes_deployment_v1.dispatcher_deployment]
+resource "kubernetes_service_v1" "restaurant_service" {
+  depends_on = [kubernetes_deployment_v1.restaurant_deployment]
   metadata {
-    name = "dispatcher"
+    name = "restaurant"
     labels = {
-      app = "dispatcher"
+      app = "restaurant"
       spring-boot = "true"
     }
   }
   spec {
     selector = {
-      app = "dispatcher"
+      app = "restaurant"
     }
     port {
       port = 8080
