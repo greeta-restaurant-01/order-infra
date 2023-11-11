@@ -23,7 +23,7 @@ resource "kubernetes_deployment_v1" "order_postgres_deployment" {
 
         container {
           name = "order-postgres"
-          image = "postgres:15.3"
+          image = "postgres:14.4"
           port {
             container_port = 5432
             name = "postgres"
@@ -83,6 +83,6 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "order_postgres_hpa" {
       kind = "Deployment"
       name = kubernetes_deployment_v1.order_postgres_deployment.metadata[0].name 
     }
-    target_cpu_utilization_percentage = 60
+    target_cpu_utilization_percentage = 80
   }
 }

@@ -47,7 +47,10 @@ resource "kubernetes_deployment_v1" "restaurant_deployment" {
           image_pull_policy = "Always"
           port {
             container_port = 8080
-          }          
+          }
+          port {
+            container_port = 8004
+          }                    
           env {
             name  = "SPRING_CLOUD_BOOTSTRAP_ENABLED"
             value = "true"
@@ -85,7 +88,7 @@ resource "kubernetes_deployment_v1" "restaurant_deployment" {
 
           env {
             name  = "BPL_DEBUG_PORT"
-            value = "8003"
+            value = "8004"
           }           
 
           # resources {

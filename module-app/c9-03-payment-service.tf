@@ -48,6 +48,9 @@ resource "kubernetes_deployment_v1" "payment_deployment" {
           port {
             container_port = 8080
           }
+          port {
+            container_port = 8003
+          }           
           env {
             name = "SPRING_DATASOURCE_URL"
             value = "jdbc:postgresql://payment-postgres:5432/paymentdb"
