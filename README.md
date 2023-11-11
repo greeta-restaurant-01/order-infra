@@ -56,7 +56,7 @@
 
 - go to the root directory of your cloned order-api, order-infra github repository
 
-- Edit "**.github/workflows**" files: replace "**greeta-order-01**" with the name of your github profile or organization; replace "**order-api and order-infra**" with the names of your cloned or forked repositories (or leave the names like this if you don't want to change the names); replace "**master**" with the name of your main branch (or leave it like this, if you don't want to change, but please, note that you would have to change default main branch name in github settings)
+- Edit "**.github/workflows**" files: replace "**greeta-restaurant-01**" with the name of your github profile or organization; replace "**order-api and order-infra**" with the names of your cloned or forked repositories (or leave the names like this if you don't want to change the names); replace "**master**" with the name of your main branch (or leave it like this, if you don't want to change, but please, note that you would have to change default main branch name in github settings)
 
 
 ### Step-05: Prepare Terraform Infrastructure:
@@ -102,7 +102,7 @@ git push origin
 
 - go to the root directory of your cloned order-infra github repository
 
-- pull changes from books-infra repository and run terraform
+- pull changes from order-infra repository and run terraform
 
 ```
 git pull
