@@ -42,8 +42,13 @@ resource "kubernetes_deployment_v1" "restaurant_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
+<<<<<<< HEAD:module-app/c9-04-restaurant-service.tf
           image = "ghcr.io/greeta-restaurant-01/restaurant-service:e217e38b0fafa2fc02c261454c64fc204d784ace"
           name  = "restaurant"
+=======
+          image = "ghcr.io/greeta-bookshop-01/dispatcher-service:2180d36e79a9dfa7dd48bc4fe370ea97b069cbdd"
+          name  = "dispatcher"
+>>>>>>> refs/remotes/origin/master:module-app/c9-03-dispatcher-service.tf
           image_pull_policy = "Always"
           port {
             container_port = 8080
