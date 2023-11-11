@@ -73,11 +73,7 @@ resource "kubernetes_deployment_v1" "gateway_deployment" {
         }               
         
         container {
-<<<<<<< HEAD:module-app/c9-05-gateway-service.tf
-          image = "ghcr.io/greeta-restaurant-01/gateway-service:e217e38b0fafa2fc02c261454c64fc204d784ace"
-=======
           image = "ghcr.io/greeta-bookshop-01/gateway-service:2180d36e79a9dfa7dd48bc4fe370ea97b069cbdd"
->>>>>>> refs/remotes/origin/master:module-app/c9-04-gateway-service.tf
           name  = "gateway"
           image_pull_policy = "Always"
           port {

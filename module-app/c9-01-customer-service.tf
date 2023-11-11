@@ -42,13 +42,8 @@ resource "kubernetes_deployment_v1" "customer_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-<<<<<<< HEAD:module-app/c9-01-customer-service.tf
-          image = "ghcr.io/greeta-restaurant-01/customer-service:7f03518833641f74c45a1fbbe91bcb7d58470a00"
-          name  = "customer"
-=======
           image = "ghcr.io/greeta-bookshop-01/catalog-service:2180d36e79a9dfa7dd48bc4fe370ea97b069cbdd"
           name  = "catalog"
->>>>>>> refs/remotes/origin/master:module-app/c9-01-catalog-service.tf
           image_pull_policy = "Always"
           port {
             container_port = 8080
