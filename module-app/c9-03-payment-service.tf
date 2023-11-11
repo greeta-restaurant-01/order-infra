@@ -42,7 +42,7 @@ resource "kubernetes_deployment_v1" "payment_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-          image = "ghcr.io/greeta-restaurant-01/payment-service:2180d36e79a9dfa7dd48bc4fe370ea97b069cbdd"
+          image = "ghcr.io/greeta-restaurant-01/payment-service:ce73f76f474261f99895a23deb30ccd8960e8e3b"
           name  = "payment"
           image_pull_policy = "Always"
           port {
