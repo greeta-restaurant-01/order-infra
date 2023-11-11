@@ -1,12 +1,11 @@
 resource "kubernetes_ingress_v1" "ingress_default" {
   depends_on = [helm_release.loadbalancer_controller,
                 helm_release.external_dns,
-                kubernetes_service_v1.order_ui_service,
                 kubernetes_service_v1.gateway_service,
-                kubernetes_service_v1.erp_service,
+                kubernetes_service_v1.catalog_service,
+                kubernetes_service_v1.dispatcher_service,
                 kubernetes_service_v1.order_service,
                 kubernetes_service_v1.keycloak_server_service,
-                kubernetes_service_v1.kafka_ui,
                 kubernetes_ingress_class_v1.ingress_class_default]
   wait_for_load_balancer = true
   metadata {
@@ -14,7 +13,7 @@ resource "kubernetes_ingress_v1" "ingress_default" {
     namespace = "default"
     annotations = {
       # Load Balancer Name
-      "alb.ingress.kubernetes.io/group.name" = "order-lb"
+      "alb.ingress.kubernetes.io/group.name" = "book-lb"
       "alb.ingress.kubernetes.io/load-balancer-name" = "ingress-default"
       # Ingress Core Settings
       "alb.ingress.kubernetes.io/scheme" = "internet-facing"
@@ -37,7 +36,7 @@ resource "kubernetes_ingress_v1" "ingress_default" {
       # SSL Redirect Setting
       "alb.ingress.kubernetes.io/ssl-redirect" = 443
       # External DNS - For creating a Record Set in Route53
-      "external-dns.alpha.kubernetes.io/hostname" = "order.greeta.net, orderapi.greeta.net, keycloak.greeta.net, kafka.greeta.net"
+      "external-dns.alpha.kubernetes.io/hostname" = "bookapi.greeta.net, keycloak.greeta.net"
       "alb.ingress.kubernetes.io/target-type" = "ip"
     }  
   }
@@ -56,7 +55,7 @@ resource "kubernetes_ingress_v1" "ingress_default" {
     }     
 
     rule {
-      host = "orderapi.greeta.net"
+      host = "bookapi.greeta.net"
       http {
 
         path {
@@ -94,46 +93,6 @@ resource "kubernetes_ingress_v1" "ingress_default" {
         }
       }
     }
-
-    rule {
-      host = "kafka.greeta.net"
-      http {
-
-        path {
-          backend {
-            service {
-              name = "kafka-ui"
-              port {
-                number = 8080
-              }
-            }
-          }
-
-          path = "/"
-          path_type = "Prefix"
-        }
-      }
-    }    
-
-    rule {
-      host = "order.greeta.net"
-      http {
-
-        path {
-          backend {
-            service {
-              name = "order-ui"
-              port {
-                number = 4200
-              }
-            }
-          }
-
-          path = "/"
-          path_type = "Prefix"
-        }
-      }
-    }                  
     
   }
 }
@@ -145,22 +104,22 @@ resource "kubernetes_ingress_v1" "ingress_default" {
 resource "kubernetes_ingress_v1" "ingress_observability_stack" {
   depends_on = [helm_release.loadbalancer_controller,
                 helm_release.external_dns,
-                kubernetes_service_v1.order_ui_service,
                 kubernetes_service_v1.gateway_service,
-                kubernetes_service_v1.erp_service,
+                kubernetes_service_v1.dispatcher_service,
+                kubernetes_service_v1.catalog_service,
                 kubernetes_service_v1.order_service,
                 kubernetes_service_v1.keycloak_server_service,
-                kubernetes_service_v1.kafka_ui,
                 null_resource.deploy_grafana_script,
                 null_resource.update_kubeconfig,
-                kubernetes_ingress_class_v1.ingress_class_default]
+                kubernetes_ingress_class_v1.ingress_class_default,
+                kubernetes_ingress_v1.ingress_default]
   wait_for_load_balancer = true
   metadata {
     name = "ingress-grafana"
     namespace = "observability-stack"
     annotations = {
       # Load Balancer Name
-      "alb.ingress.kubernetes.io/group.name" = "order-lb"
+      "alb.ingress.kubernetes.io/group.name" = "book-lb"
       "alb.ingress.kubernetes.io/load-balancer-name" = "ingress-default"
       # Ingress Core Settings
       "alb.ingress.kubernetes.io/scheme" = "internet-facing"

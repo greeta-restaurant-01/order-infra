@@ -1,7 +1,7 @@
 # Define Local Values in Terraform
 locals {
   environment = var.environment
-  name = "order-${var.environment}"
+  name = "book-${var.environment}"
   common_tags = {
     environment = local.environment
   }

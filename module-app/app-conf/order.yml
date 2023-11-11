@@ -1,47 +1,59 @@
+server:
+  shutdown: graceful
+  forward-headers-strategy: framework
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+
 spring:
   application:
     name: order
-  main:
-    allow-bean-definition-overriding: true    
-  output:
-    ansi:
-      enabled: ALWAYS
-  jpa:
-    hibernate:
-      ddl-auto: create
-  datasource:
-    url: jdbc:postgresql://order-postgres:5432/orderdb
-    username: postgres
-    password: postgres
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  r2dbc:
+    username: user
+    password: password
+    url: r2dbc:postgresql://book-postgres:5432/polardb_order
+    pool:
+      max-create-connection-time: 2s
+      initial-size: 5
+      max-size: 10
+  flyway:
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+    url: jdbc:postgresql://book-postgres:5432/polardb_order
+  config:
+    import: "" # When using Config Service, add "optional:configserver:"
+  cloud:
+    function:
+      definition: dispatchOrder
+    stream:
+      bindings:
+        dispatchOrder-in-0:
+          destination: order-dispatched
+          group: ${spring.application.name}
+        acceptOrder-out-0:
+          destination: order-accepted
+      rabbit:
+        bindings:
+          acceptOrder-out-0:
+            producer:
+              transacted: true
+  rabbitmq:
+    host: book-rabbitmq
+    port: 5672
+    username: user
+    password: password
+    connection-timeout: 5s
   keycloak:
-    server-url: https://keycloak.greeta.net
+    server-url: http://keycloak-server:8080
+    server-external-url: https://keycloak.greeta.net
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${spring.keycloak.server-url}/realms/order-realm
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
-
-  kafka:
-    bootstrap-servers: bitnami-kafka:9092
-    consumer:
-      auto-offset-reset: latest
-    streams:
-      bootstrap-servers: bitnami-kafka:9092
-      application-id: orders-kafka-streams
-
-    properties:
-      default:
-        key:
-          serde: 'org.apache.kafka.common.serialization.Serdes$StringSerde'
-        value:
-          serde: 'org.apache.kafka.common.serialization.Serdes$StringSerde'
-        deserialization:
-          exception:
-            handler: 'org.apache.kafka.streams.errors.LogAndContinueExceptionHandler'
-        serialization:
-          exception:
-            handler: 'net.greeta.order.exceptionhandler.StreamsSerializationExceptionHandler'          
+          issuer-uri: ${spring.keycloak.server-external-url}/realms/book-realm
+          jwk-set-uri: ${spring.keycloak.server-url}/realms/book-realm/protocol/openid-connect/certs
 
 logging:
   pattern:
@@ -52,15 +64,13 @@ logging:
     org.springframework.security: DEBUG
 
 info:
-  system: Order Service
+  system: Polar Bookshop
 
-server:
-  forward-headers-strategy: framework
 
 jwt:
   auth:
     converter:
-      resource-id: order-app
+      resource-id: book-app
       principal-attribute: preferred_username
 
 management:
@@ -85,8 +95,10 @@ management:
     tags:
       application: ${spring.application.name}
 
-
 openapi:
   oauthflow:
-    authServerUrl: https://keycloak.greeta.net
-    realm: order-realm
+    authServerUrl: ${spring.keycloak.server-external-url}
+    realm: book-realm
+
+polar:
+  catalog-service-uri: "http://catalog:8080"

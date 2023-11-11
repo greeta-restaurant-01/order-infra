@@ -4,6 +4,6 @@
      name = "keycloak-postgres-dbcreation-script"
    }
    data = {
-    "keycloak-db.sql" = "${file("${path.module}/keycloak-db.sql")}"
+    "keycloak-db.sql" = "${file("${path.module}/init-conf/keycloak-db.sql")}"
    }
  } 

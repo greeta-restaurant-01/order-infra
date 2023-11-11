@@ -1,13 +1,13 @@
 # Resource: Order Postgres Kubernetes Deployment
-resource "kubernetes_deployment_v1" "order_postgres_deployment" {
+resource "kubernetes_deployment_v1" "book_postgres_deployment" {
   metadata {
-    name = "order-postgres"
+    name = "book-postgres"
   }
   spec {
     replicas = 1
     selector {
       match_labels = {
-        app = "order-postgres"
+        app = "book-postgres"
       }          
     }
     strategy {
@@ -16,27 +16,33 @@ resource "kubernetes_deployment_v1" "order_postgres_deployment" {
     template {
       metadata {
         labels = {
-          app = "order-postgres"
+          app = "book-postgres"
         }
       }
       spec {
         volume {
-          name = "order-postgres-dbcreation-script"
+          name = "book-postgres-dbcreation-script"
           config_map {
-            name = kubernetes_config_map_v1.order_postgres_config_map.metadata.0.name 
+            name = kubernetes_config_map_v1.book_postgres_config_map.metadata.0.name
           }
         }
 
         container {
-          name = "order-postgres"
+          name = "book-postgres"
           image = "postgres:15.3"
           port {
             container_port = 5432
             name = "postgres"
           }
+          
           env {
-            name = "POSTGRES_PASSWORD"
-            value = "postgres"
+            name  = "POSTGRES_USER"
+            value = "user"
+          }
+
+          env {
+            name  = "POSTGRES_PASSWORD"
+            value = "password"
           }
 
           readiness_probe {
@@ -46,7 +52,7 @@ resource "kubernetes_deployment_v1" "order_postgres_deployment" {
           }          
 
           volume_mount {
-            name = "order-postgres-dbcreation-script"
+            name = "book-postgres-dbcreation-script"
             mount_path = "/docker-entrypoint-initdb.d"
           }          
         }
@@ -57,13 +63,13 @@ resource "kubernetes_deployment_v1" "order_postgres_deployment" {
 }
 
 # Resource: Keyloak Postgres Load Balancer Service
-resource "kubernetes_service_v1" "order_postgres_service" {
+resource "kubernetes_service_v1" "book_postgres_service" {
   metadata {
-    name = "order-postgres"
+    name = "book-postgres"
   }
   spec {
     selector = {
-      app = kubernetes_deployment_v1.order_postgres_deployment.spec.0.selector.0.match_labels.app 
+      app = kubernetes_deployment_v1.book_postgres_deployment.spec.0.selector.0.match_labels.app 
     }
     port {
       port        = 5432 # Service Port
@@ -75,9 +81,9 @@ resource "kubernetes_service_v1" "order_postgres_service" {
 }
 
 # Resource: order Postgres Horizontal Pod Autoscaler
-resource "kubernetes_horizontal_pod_autoscaler_v1" "order_postgres_hpa" {
+resource "kubernetes_horizontal_pod_autoscaler_v1" "book_postgres_hpa" {
   metadata {
-    name = "order-postgres-hpa"
+    name = "book-postgres-hpa"
   }
   spec {
     max_replicas = 2
@@ -85,7 +91,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "order_postgres_hpa" {
     scale_target_ref {
       api_version = "apps/v1"
       kind = "Deployment"
-      name = kubernetes_deployment_v1.order_postgres_deployment.metadata[0].name 
+      name = kubernetes_deployment_v1.book_postgres_deployment.metadata[0].name 
     }
     target_cpu_utilization_percentage = 60
   }
