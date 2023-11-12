@@ -49,7 +49,7 @@
 
 - In your cloned order-api Github Repository, go to `Settings -> Secrets and Variables -> Actions -> New Repository Secret` and create `DISPATCH_TOKEN` secret with the value of your personal github token (You need to create personal token in `Developer Settings` and make sure you give it workflow permissions)
 
-- make sure your `order-api` repository docker image is public by default (you need to change it in github settings: `https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility`)
+- make sure your `order-api` repository docker image is public by default (you need to change it in github settings: https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
 
 
 ### Step-04: Prepare API Source Code and Github Actions Workflow:
@@ -63,7 +63,7 @@
 
 - go to the root directory of your cloned order-infra github repository
 
-- create terraform.auto.tfvars in your order-infra repository and provide your own aws_region and ssl_certificate_arn
+- create terraform.auto.tfvars in your order-infra repository and provide your own `aws_region` and `ssl_certificate_arn`
 
 ```
 aws_region = "eu-central-1"
