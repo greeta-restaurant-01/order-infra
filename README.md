@@ -7,7 +7,7 @@
 
 ###### **admin password:** admin
 
-**Swagger UI Spring Cloud Gateway REST API Documentation**, secured with **Keycloak Server** will be available here: **https://bookapi.yourdomain.com**
+**Swagger UI Spring Cloud Gateway REST API Documentation**, secured with **Keycloak Server** will be available here: **https://orderapi.yourdomain.com**
 
 ###### **manager user:** admin
 
