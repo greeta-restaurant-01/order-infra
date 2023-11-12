@@ -1,5 +1,5 @@
 ### AWS Startup Template For Spring Boot Developers
-#### Welcome to AWS Full-Stack Developer Template: Swagger UI + Spring Boot + Terraform + Kubernetes + Keycloak Oauth2 Authorization Server + Github Actions + Local Docker Build and Start Environment + Integration Tests with TestContainers + Remote Debugging + Spring Cloud Gateway + Spring Cloud Stream + Dispatcher Pattern + AWS SSL Certificate + External DNS + AWS Load Balancer Controller + Spring Cloud Kubernetes + Grafana Observability Stack
+#### Welcome to AWS Full-Stack Developer Template: Swagger UI + Spring Boot + Terraform + Kubernetes + Kakfa + Event-Driven Microservices + Saga Transations + CQRS + Domain-Driven Design + Clean Code + Keycloak Oauth2 Authorization Server + Github Actions + Local Docker Build and Start Environment + Remote Debugging + Spring Cloud Gateway + Spring Cloud Stream + Dispatcher Pattern + AWS SSL Certificate + External DNS + AWS Load Balancer Controller + Spring Cloud Kubernetes + Grafana Observability Stack
 
 **Keycloak Administration Console** will be available here: **https://keycloak.yourdomain.com**
 
@@ -39,7 +39,7 @@
 
 - make sure you have your own registered domain and hosted zone
 
--  create wildcard AWS Certificate for your domain: "*.yourdomain.com" (you will need ssl_certificate_arn later)
+-  create wildcard AWS Certificate for your domain: `*.yourdomain.com` (you will need ssl_certificate_arn later)
 
 ### Step-03: Prepare Your Github Account
 
@@ -47,14 +47,14 @@
 
 - clone order-api and order-infra repositories to your github profile or organization
 
-- In your cloned order-api Github Repository, go to Settings -> Secrets and Variables -> Actions -> New Repository Secret and create DISPATCH_TOKEN secret with the value of your personal github token (You need to create personal token in Developer Settings and make sure you give it workflow permissions)
+- In your cloned order-api Github Repository, go to `Settings -> Secrets and Variables -> Actions -> New Repository Secret` and create `DISPATCH_TOKEN` secret with the value of your personal github token (You need to create personal token in `Developer Settings` and make sure you give it workflow permissions)
 
-- make sure your order-api repository docker images is public by default (you need to change it in github settings: https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)
+- make sure your `order-api` repository docker image is public by default (you need to change it in github settings: `https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility`)
 
 
 ### Step-04: Prepare API Source Code and Github Actions Workflow:
 
-- go to the root directory of your cloned order-api, order-infra github repository
+- go to the root directory of your cloned `order-api`, `order-infra` github repository
 
 - Edit "**.github/workflows**" files: replace "**greeta-restaurant-01**" with the name of your github profile or organization; replace "**order-api and order-infra**" with the names of your cloned or forked repositories (or leave the names like this if you don't want to change the names); replace "**master**" with the name of your main branch (or leave it like this, if you don't want to change, but please, note that you would have to change default main branch name in github settings)
 
@@ -73,9 +73,9 @@ cluster_name = "order-cluster"
 ssl_certificate_arn = "arn:aws:acm:eu-central-1:your-certificate-arn"
 ```
 
-- replace "greeta.net" in terraform files of order-infra repository, with the name of your domain (please, use search to find all files, where "greeta.net" is used)
+- replace `greeta.net` in terraform files of `order-infra` repository, with the name of your domain (please, use search to find all files, where `greeta.net` is used)
 
-- Commit your order-infra changes to github (don't worry, terraform.auto.tfvars is in .gitignore and it won't be committed)
+- Commit your `order-infra` changes to github (don't worry, `terraform.auto.tfvars` is in `.gitignore` and it won't be committed)
 ```
 git add .
 git commit -m "your comment"
@@ -84,34 +84,34 @@ git push origin
 
 ### Step-06: Build Docker Images with Github Actions
 
-- go to the root directory of your cloned order-api github repository
+- go to the root directory of your cloned `order-api` github repository
 
-- Commit your order-api changes to github (it should trigger creation of docker images pipeline and also trigger order-infra pipeline)
+- Commit your `order-api` changes to github (it should trigger creation of docker images pipeline and also trigger `order-infra` pipeline)
 ```
 git add .
 git commit -m "your comment"
 git push origin
 ````
 
-- wait until order-api pipeline in github is finished and order-infra pipeline is started
+- wait until `order-api` pipeline in github is finished and `order-infra` pipeline is started
 
-- order-infra pipeline automatically changes docker image versions to the versions of docker images, created in order-api pipeline and pushes new docker image versions to order-infra repository
+- `order-infra` pipeline automatically changes docker image versions to the versions of docker images, created in `order-api` pipeline and pushes new docker image versions to `order-infra` repository
 
 
 ### Step-07: Deploy Infrastructure to AWS with Terraform:
 
-- go to the root directory of your cloned order-infra github repository
+- go to the root directory of your cloned `order-infra` github repository
 
-- pull changes from order-infra repository and run terraform
+- pull changes from `order-infra` repository and run terraform
 
 ```
 git pull
 terraform apply --auto-approve
 ```
 
-- if terraform script is failed during creation of grafana observability stack, please, run terraform apply --auto-approve again (it sometimes happens when kubernetes cluster is not ready yet)
+- if terraform script is failed during creation of grafana observability stack, please, run `terraform apply --auto-approve` again (it sometimes happens when kubernetes cluster is not ready yet)
 
-- grafana observability stack will be available by url: https://grafana.yourdomain.com; username: user; password: you should see the password in the output of terraform script. Sometimes it is empty. In this case, you can get the password with this command:
+- grafana observability stack will be available by url: `https://grafana.yourdomain.com`; `username: user`; `password`: you should see the password in the output of terraform script. Sometimes it is empty. In this case, you can get the password with this command:
 
 ```
 kubectl get secret --namespace observability-stack loki-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode;
@@ -142,7 +142,7 @@ kubectl get secret --namespace observability-stack loki-stack-grafana -o jsonpat
 
 ### Step-09: Clean-Up:
 
-Please make sure you run terraform-destroy.sh script, instead of just calling terraform destroy (otherwise you will have issues with deletion of kubernetes ingress resources by terraform)
+Please make sure you run `terraform-destroy.sh` script, instead of just calling terraform destroy (otherwise you will have issues with deletion of kubernetes ingress resources by terraform)
 
 ```
 sh terraform-destroy.sh  
