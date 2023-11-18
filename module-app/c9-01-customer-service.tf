@@ -42,7 +42,7 @@ resource "kubernetes_deployment_v1" "customer_deployment" {
         service_account_name = "spring-cloud-kubernetes"      
         
         container {
-          image = "ghcr.io/greeta-restaurant-01/customer-service:db25721f3a147ebb22a5196d4ee40d1309433b45"
+          image = "ghcr.io/greeta-restaurant-01/customer-service:7c4494aad833a45e778a871740b23ac720f0bae1"
           name  = "customer"
           image_pull_policy = "Always"
           port {
